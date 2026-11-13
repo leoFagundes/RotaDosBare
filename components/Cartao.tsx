@@ -37,18 +37,24 @@ export default function Cartao({
         >
           {primeira ? "O mapa começa aqui" : "Próxima parada"}
         </motion.p>
-        <motion.h2 variants={item} className="mt-1 font-pirata text-[2rem] leading-none text-tinta">
+        <motion.h2
+          variants={item}
+          className="mt-1 font-pirata text-[2rem] leading-none text-tinta"
+        >
           {parada.nome}
         </motion.h2>
-        <motion.p variants={item} className="mt-1 text-[15px] text-tinta/80 italic">
+        <motion.p
+          variants={item}
+          className="mt-1 text-[15px] text-tinta/80 italic"
+        >
           {parada.endereco}
         </motion.p>
-        {parada.petisco && (
+        {/* {parada.petisco && (
           <motion.p variants={item} className="text-[15px] text-tinta/80">
             <span className="font-pirata tracking-wide text-sangue">Pedida da casa:</span>{" "}
             {parada.petisco}
           </motion.p>
-        )}
+        )} */}
 
         <motion.div variants={item} className="mt-4 grid grid-cols-2 gap-2.5">
           <a
@@ -73,9 +79,19 @@ export default function Cartao({
 
 function Bussola() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8}>
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+    >
       <circle cx="12" cy="12" r="9.5" />
-      <path d="M15.5 8.5 13.4 13.4 8.5 15.5 10.6 10.6Z" fill="currentColor" fillOpacity={0.3} />
+      <path
+        d="M15.5 8.5 13.4 13.4 8.5 15.5 10.6 10.6Z"
+        fill="currentColor"
+        fillOpacity={0.3}
+      />
     </svg>
   );
 }
