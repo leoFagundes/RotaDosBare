@@ -1,0 +1,107 @@
+// ⚠️ Arquivo só de servidor: contém as respostas e os próximos bares.
+// Nunca importe este arquivo em um componente "use client".
+
+import type { Parada } from "./tipos";
+
+type ParadaSecreta = Parada & {
+  /** Resposta do enigma feito NESTE bar. Acertar libera a próxima parada. */
+  resposta: string;
+};
+
+const maps = (q: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+
+export const ROTA: ParadaSecreta[] = [
+  {
+    nome: "Bitaca da Norte",
+    apelido: "Bitaca",
+    endereco: "SCLRN 716",
+    petisco: "Pastel",
+    maps: maps("Bitaca da Norte SCLRN 716 Brasília"),
+    resposta: "123",
+  },
+  {
+    nome: "Bar dos Cunhados",
+    apelido: "Cunhados",
+    endereco: "CLN 115",
+    petisco: "Torresmo",
+    maps: maps("Bar dos Cunhados CLN 115 Brasília"),
+    resposta: "123",
+  },
+  {
+    nome: "Ilgiorno Gelato",
+    apelido: "Ilgiorno",
+    endereco: "CLN 113",
+    petisco: "Gelato",
+    maps: maps("Ilgiorno Gelato CLN 113 Brasília"),
+    resposta: "123",
+  },
+  {
+    nome: "Arena 312 ou Chiquinhos Bar",
+    apelido: "Arena 312",
+    endereco: "CLN 312",
+    petisco: "Isca de frango ou batata com cheddar e bacon",
+    maps: maps("Arena 312 CLN 312 Brasília"),
+    resposta: "123",
+  },
+  {
+    nome: "Bar do Mendes",
+    apelido: "Mendes",
+    endereco: "CLN 410",
+    petisco: "Pastel",
+    maps: maps("Bar do Mendes CLN 410 Brasília"),
+    resposta: "123",
+  },
+  {
+    nome: "Vale da Lua",
+    apelido: "Vale da Lua",
+    endereco: "CLN 408",
+    petisco: "Carne de sol com mandioca",
+    maps: maps("Vale da Lua CLN 408 Brasília"),
+    resposta: "123",
+  },
+  {
+    nome: "Buteco do Encontro",
+    apelido: "Encontro",
+    endereco: "CLN 206",
+    petisco: "Pastel",
+    maps: maps("Buteco do Encontro CLN 206 Brasília"),
+    resposta: "123",
+  },
+  {
+    nome: "Origen",
+    apelido: "Origen",
+    endereco: "Asa Norte",
+    maps: maps("Origen bar Asa Norte Brasília"),
+    resposta: "123",
+  },
+  {
+    nome: "Deboche",
+    apelido: "Deboche",
+    endereco: "Asa Norte",
+    maps: maps("Deboche bar Asa Norte Brasília"),
+    resposta: "123",
+  },
+];
+
+/** Local da jogatina: revelado só depois da última resposta. */
+export const DESTINO_FINAL: Parada = {
+  nome: "Local da jogatina",
+  apelido: "Jogatina",
+  endereco: "endereço a definir",
+  maps: maps("Brasília"),
+};
+
+export function publica(i: number): Parada {
+  const { nome, apelido, endereco, petisco, maps } = ROTA[i];
+  return { nome, apelido, endereco, petisco, maps };
+}
+
+export function normalizar(s: string) {
+  return s
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
