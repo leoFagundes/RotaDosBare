@@ -3,11 +3,12 @@
 export const TEXTOS = {
   chamada: "Despedida de solteiro",
   titulo: "A Rota do Tesouro",
-  promessa: "Nove bares. Nove enigmas. Um tesouro escondido no caminho.",
+  promessa: "Nove bares. Nove enigmas. E muita bebida...",
   botaoIniciar: "Abrir o mapa",
 
   finalTitulo: "Bora jogar!",
-  finalTexto: "Agora vamos para o local de jogatina comemorar seu dia de solteiro!",
+  finalTexto:
+    "Agora vamos para o local de jogatina comemorar seu dia de solteiro!",
   /** Nomes que aparecem dos lados do meeple na tela final. */
   nomeEsquerda: "Erick",
   nomeDireita: "Diandra",
