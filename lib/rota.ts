@@ -15,7 +15,7 @@ export const ROTA: ParadaSecreta[] = [
   {
     nome: "Bitaca da Norte",
     apelido: "Bitaca",
-    endereco: "SCLRN 716",
+    endereco: "SCLRN 716 · Bloco F, loja 29",
     petisco: "Pastel",
     maps: maps("Bitaca da Norte SCLRN 716 Brasília"),
     resposta: "Bitaca",
@@ -39,7 +39,7 @@ export const ROTA: ParadaSecreta[] = [
   {
     nome: "Arena 312 ou Chiquinhos Bar",
     apelido: "Arena 312",
-    endereco: "CLN 312",
+    endereco: "CLN 312 · Bloco A, loja 16",
     petisco: "Isca de frango ou batata com cheddar e bacon",
     maps: maps("Arena 312 CLN 312 Brasília"),
     resposta: "Arena",
@@ -63,7 +63,7 @@ export const ROTA: ParadaSecreta[] = [
   {
     nome: "Buteco do Encontro",
     apelido: "Encontro",
-    endereco: "CLN 206",
+    endereco: "CLN 206 · Bloco C, loja 23",
     petisco: "Pastel",
     maps: maps("Buteco do Encontro CLN 206 Brasília"),
     resposta: "butecodoEncontro",
@@ -71,15 +71,15 @@ export const ROTA: ParadaSecreta[] = [
   {
     nome: "Origen",
     apelido: "Origen",
-    endereco: "Asa Norte",
-    maps: maps("Origen bar Asa Norte Brasília"),
+    endereco: "CLN 203 · Bloco C, loja 37",
+    maps: maps("Origen Bar CLN 203 Brasília"),
     resposta: "Origen",
   },
   {
     nome: "Deboche",
     apelido: "Deboche",
-    endereco: "Asa Norte",
-    maps: maps("Deboche bar Asa Norte Brasília"),
+    endereco: "CLN 201 · Bloco A",
+    maps: maps("Deboche Bar CLN 201 Brasília"),
     resposta: "Deboche",
   },
 ];
