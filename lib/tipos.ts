@@ -10,6 +10,6 @@ export type Parada = {
 export type RespostaApi =
   | { ok: false; erro?: string }
   | { ok: true; final: false; proxima: Parada }
-  | { ok: true; final: true; destino: Parada };
+  | { ok: true; final: true; parada: Parada; destino: Parada };
 
 export const TOTAL_FASES = 9;

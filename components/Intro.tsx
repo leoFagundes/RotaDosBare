@@ -5,9 +5,34 @@ import { motion } from "motion/react";
 import { TEXTOS } from "@/lib/config";
 import Letreiro from "./Letreiro";
 
-/** Pergaminho que se desenrola, com o título escrito letra a letra e o lacre para abrir. */
-export default function Intro({ aoIniciar }: { aoIniciar: () => void }) {
+/** Pergaminho inicial: a primeira resposta libera a entrada no mapa. */
+export default function Intro({
+  aoConferir,
+  aoIniciar,
+}: {
+  aoConferir: (resposta: string) => Promise<boolean>;
+  aoIniciar: () => void;
+}) {
   const [saindo, setSaindo] = useState(false);
+  const [texto, setTexto] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  async function enviar(e: React.FormEvent) {
+    e.preventDefault();
+    if (!texto.trim() || enviando || saindo) return;
+
+    setEnviando(true);
+    setErro(null);
+    try {
+      if (await aoConferir(texto)) setSaindo(true);
+      else setErro("Resposta incorreta. Confira a pista e tente novamente.");
+    } catch {
+      setErro("Não foi possível conferir agora. Tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   return (
     <main className="fixed inset-0 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_40%,#4a2c12,#1b0f05_75%)] px-6">
@@ -86,33 +111,44 @@ export default function Intro({ aoIniciar }: { aoIniciar: () => void }) {
               {TEXTOS.promessa}
             </motion.p>
 
-            <motion.button
-              onClick={() => setSaindo(true)}
-              disabled={saindo}
-              initial={{ scale: 0, rotate: -90 }}
-              animate={{ scale: 1, rotate: 0 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ delay: 3.4, type: "spring", stiffness: 220, damping: 13 }}
-              className="relative mt-8 flex h-32 w-32 items-center justify-center"
-            >
-              <motion.span
-                className="absolute inset-0 rounded-full bg-sangue/30"
-                animate={{ scale: [1, 1.35], opacity: [0.6, 0] }}
-                transition={{ repeat: Infinity, duration: 1.8, delay: 4 }}
+            <form onSubmit={enviar} className="mt-7 w-full text-left">
+              <label
+                htmlFor="primeira-resposta"
+                className="block text-center text-sm text-tinta/75 italic"
+              >
+                Digite a resposta do primeiro enigma para abrir o mapa
+              </label>
+              <input
+                id="primeira-resposta"
+                value={texto}
+                onChange={(e) => {
+                  setTexto(e.target.value);
+                  if (erro) setErro(null);
+                }}
+                autoFocus
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+                disabled={enviando || saindo}
+                placeholder="Sua resposta..."
+                className="mt-3 w-full rounded-xl border-2 border-tinta/50 bg-[#fff8e6]/80 px-4 py-3.5 text-center font-pirata text-2xl tracking-wide text-tinta placeholder:text-tinta/35 outline-none transition-colors focus:border-sangue"
               />
-              <svg viewBox="0 0 200 200" className="absolute inset-0 drop-shadow-[0_8px_10px_rgba(60,10,0,0.5)]">
-                <path
-                  d="M100 8c13 0 18 10 30 13s24-3 32 7 2 22 8 33 18 16 18 39-12 26-18 37-0 23-8 32-21 4-32 8-17 13-30 13-18-10-30-13-24 3-32-7-2-22-8-33-18-16-18-39 12-26 18-37 0-23 8-32 21-4 32-8 17-13 30-13z"
-                  fill="#9b2617"
-                />
-                <circle cx="100" cy="100" r="62" fill="none" stroke="#6e150a" strokeWidth="4" />
-              </svg>
-              <span className="relative font-pirata text-[1.35rem] leading-[1.05] text-[#f6dcc0]">
-                {TEXTOS.botaoIniciar.split(" ").slice(0, 1)}
-                <br />
-                {TEXTOS.botaoIniciar.split(" ").slice(1).join(" ")}
-              </span>
-            </motion.button>
+              <div className="h-9 pt-2 text-center" aria-live="polite">
+                {erro && <p className="text-sm text-sangue italic">{erro}</p>}
+              </div>
+              <motion.button
+                type="submit"
+                disabled={enviando || saindo || !texto.trim()}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ delay: 3.4, type: "spring", stiffness: 220, damping: 13 }}
+                className="w-full rounded-xl bg-lacre py-4 font-pirata text-2xl text-papel shadow-[0_5px_0_#4d1308] transition-all active:translate-y-1 active:shadow-none disabled:opacity-60"
+              >
+                {enviando ? "Conferindo..." : TEXTOS.botaoIniciar}
+              </motion.button>
+            </form>
           </div>
         </motion.div>
         <Rolo baixo />

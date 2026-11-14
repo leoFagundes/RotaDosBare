@@ -5,15 +5,15 @@ import type { Parada } from "./tipos";
 
 export type Progresso = {
   iniciado: boolean;
-  /** Quantas respostas certas (0..9). Também é quantos trechos do meeple estão desenhados. */
+  /** Quantas respostas certas (0..9). */
   acertos: number;
-  /** Paradas já reveladas, na ordem. paradas[acertos] é o destino atual. */
+  /** Paradas reveladas pelas respostas, na ordem. */
   paradas: Parada[];
-  /** Local da jogatina, revelado só depois da última resposta. */
+  /** Local da jogatina, exibido só depois de uma ação do jogador. */
   destinoFinal?: Parada;
 };
 
-const CHAVE = "rota-progresso-v1";
+const CHAVE = "rota-progresso-v2";
 const ouvintes = new Set<() => void>();
 let bruto: string | null | undefined;
 let cache: Progresso | null = null;

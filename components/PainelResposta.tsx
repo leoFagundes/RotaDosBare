@@ -78,9 +78,12 @@ function Conteudo({ parada, aoFechar, aoConferir }: Props) {
       >
         <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-tinta/30" />
         <p className="text-[11px] font-bold tracking-[0.25em] text-tinta/60 uppercase">
-          O enigma do
+          Você está em
         </p>
         <h3 className="font-pirata text-3xl leading-tight text-tinta">{parada.nome}</h3>
+        <p className="mt-1 text-sm text-tinta/75 italic">
+          Digite a resposta da próxima pista para revelar o próximo bar.
+        </p>
 
         <form onSubmit={enviar} className="mt-4">
           <div ref={escopo}>

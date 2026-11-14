@@ -25,8 +25,13 @@ export async function POST(request: Request) {
 
   const corpo: RespostaApi =
     fase === ROTA.length - 1
-      ? { ok: true, final: true, destino: DESTINO_FINAL }
-      : { ok: true, final: false, proxima: publica(fase + 1) };
+      ? {
+          ok: true,
+          final: true,
+          parada: publica(fase),
+          destino: DESTINO_FINAL,
+        }
+      : { ok: true, final: false, proxima: publica(fase) };
 
   return Response.json(corpo);
 }

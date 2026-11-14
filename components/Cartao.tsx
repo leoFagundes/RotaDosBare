@@ -11,10 +11,12 @@ const item = {
 export default function Cartao({
   parada,
   primeira,
+  textoAcao = "Responder",
   aoResponder,
 }: {
   parada: Parada;
   primeira: boolean;
+  textoAcao?: string;
   aoResponder: () => void;
 }) {
   return (
@@ -69,7 +71,7 @@ export default function Cartao({
             onClick={aoResponder}
             className="rounded-xl bg-lacre py-3 font-pirata text-lg text-papel shadow-[0_4px_0_#4d1308] active:translate-y-1 active:shadow-none transition-all"
           >
-            Responder
+            {textoAcao}
           </button>
         </motion.div>
       </motion.div>

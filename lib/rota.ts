@@ -4,7 +4,7 @@
 import type { Parada } from "./tipos";
 
 type ParadaSecreta = Parada & {
-  /** Resposta do enigma feito NESTE bar. Acertar libera a próxima parada. */
+  /** Resposta da pista real que libera esta parada. */
   resposta: string;
 };
 
@@ -88,8 +88,8 @@ export const ROTA: ParadaSecreta[] = [
 export const DESTINO_FINAL: Parada = {
   nome: "Local da jogatina",
   apelido: "Jogatina",
-  endereco: "Casa do Claudio ou do Diego",
-  maps: maps("Brasília"),
+  endereco: "Casa dos Diego",
+  maps: maps("Guará 2 qe 52 conjunto L Lote 1"),
 };
 
 export function publica(i: number): Parada {

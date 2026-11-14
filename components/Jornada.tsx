@@ -19,6 +19,7 @@ const esperar = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 export default function Jornada({ inicial }: { inicial: Parada }) {
   const salvo = useProgresso();
   const mapa = useRef<MapaHandle>(null);
+  const primeiraResposta = useRef<Parada | null>(null);
   const [cartao, setCartao] = useState(true);
   const [painel, setPainel] = useState(false);
   const [acertou, setAcertou] = useState(false);
@@ -37,14 +38,32 @@ export default function Jornada({ inicial }: { inicial: Parada }) {
 
   if (salvo === undefined) return <div className="papel fixed inset-0" />;
 
-  const p: Progresso = salvo ?? { iniciado: false, acertos: 0, paradas: [inicial] };
+  const p: Progresso = salvo ?? { iniciado: false, acertos: 0, paradas: [] };
   const concluido = p.acertos >= TOTAL_FASES;
-  const destino = p.paradas[Math.min(p.acertos, p.paradas.length - 1)];
+  const destino = p.paradas.at(-1) ?? inicial;
+
+  async function conferirInicio(resposta: string): Promise<boolean> {
+    const r = await fetch("/api/resposta", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ fase: 0, resposta }),
+    });
+    const dados = (await r.json()) as RespostaApi;
+    if (!dados.ok) return false;
+    if (dados.final) throw new Error("Resposta inicial recebeu uma parada final inesperada.");
+    primeiraResposta.current = dados.proxima;
+    return true;
+  }
 
   async function iniciar() {
+    const primeira = primeiraResposta.current;
+    if (!primeira) throw new Error("A primeira resposta ainda não foi conferida.");
+
     setCartao(false);
     setOcupado(true);
-    flushSync(() => salvar({ ...p, iniciado: true }));
+    flushSync(() =>
+      salvar({ iniciado: true, acertos: 1, paradas: [primeira] }),
+    );
     await esperar(700);
     await mapa.current?.focar(0, 1300);
     await mapa.current?.carimbar(0);
@@ -72,28 +91,33 @@ export default function Jornada({ inicial }: { inicial: Parada }) {
     setAcertou(false);
 
     const i = p.acertos;
-    await mapa.current?.desenhar(i);
+    await mapa.current?.desenhar(i - 1, dados.final);
 
     if (!dados.final) {
       salvar({ ...p, acertos: i + 1, paradas: [...p.paradas, dados.proxima] });
-      await mapa.current?.carimbar(i + 1);
+      await mapa.current?.carimbar(i);
       await esperar(250);
       await mapa.current?.recuar();
       setCartao(true);
     } else {
-      salvar({ ...p, acertos: TOTAL_FASES, destinoFinal: dados.destino });
+      salvar({
+        ...p,
+        acertos: TOTAL_FASES,
+        paradas: [...p.paradas, dados.parada],
+        destinoFinal: dados.destino,
+      });
       await mapa.current?.recuar(1500);
-      await mapa.current?.pintar();
-      await esperar(400);
-      setFinal(true);
+      setCartao(true);
     }
     setOcupado(false);
     return true;
   }
 
-  if (!p.iniciado) return <Intro aoIniciar={iniciar} />;
+  if (!p.iniciado) {
+    return <Intro aoConferir={conferirInicio} aoIniciar={iniciar} />;
+  }
 
-  const rotulos = p.paradas.slice(0, Math.min(p.acertos + 1, TOTAL_FASES)).map((x) => x.apelido);
+  const rotulos = p.paradas.map((x) => x.apelido);
 
   return (
     <motion.main
@@ -106,12 +130,12 @@ export default function Jornada({ inicial }: { inicial: Parada }) {
 
       <Mapa
         ref={mapa}
-        trechos={p.acertos}
+        trechos={concluido ? TOTAL_FASES : Math.max(0, p.paradas.length - 1)}
         rotulos={rotulos}
-        xInicial={concluido ? null : cartao ? p.acertos : null}
+        xInicial={concluido || !cartao ? null : p.paradas.length - 1}
         concluido={concluido}
         margemTopo={96}
-        margemBase={concluido ? 130 : 290}
+        margemBase={290}
       />
 
       <div className="absolute inset-x-0 top-0 z-20">
@@ -120,25 +144,14 @@ export default function Jornada({ inicial }: { inicial: Parada }) {
 
       <div className="absolute inset-x-0 bottom-0 z-20 px-4 pb-[max(0.25rem,env(safe-area-inset-bottom))]">
         <AnimatePresence mode="wait">
-          {cartao && !concluido && !ocupado && (
+          {cartao && !ocupado && (
             <Cartao
               key={p.acertos}
               parada={destino}
-              primeira={p.acertos === 0}
-              aoResponder={() => setPainel(true)}
+              primeira={p.paradas.length === 1}
+              textoAcao={concluido ? "Ver destino final" : undefined}
+              aoResponder={() => (concluido ? setFinal(true) : setPainel(true))}
             />
-          )}
-          {concluido && !final && !ocupado && (
-            <motion.button
-              key="rever"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 30 }}
-              onClick={() => setFinal(true)}
-              className="mb-2 w-full rounded-2xl bg-lacre py-4 font-pirata text-2xl text-papel shadow-[0_6px_0_#4d1308]"
-            >
-              Ver a última parada
-            </motion.button>
           )}
         </AnimatePresence>
         <Recomecar visivel={!ocupado} />

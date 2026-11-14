@@ -4,7 +4,7 @@ export const TEXTOS = {
   chamada: "Despedida de solteiro",
   titulo: "A Rota da Bebida",
   promessa: "Nove bares. Nove enigmas. E muita bebida...",
-  botaoIniciar: "Abrir o mapa",
+  botaoIniciar: "Conferir resposta",
 
   finalTitulo: "Bora jogar!",
   finalTexto:

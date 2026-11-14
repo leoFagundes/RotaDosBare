@@ -19,13 +19,11 @@ export type MapaHandle = {
   /** Câmera vai até a parada i (zoom). */
   focar: (i: number, ms?: number) => Promise<void>;
   /** Desenha o trecho i (parada i → i+1) com o meeplezinho pulando e a câmera seguindo. */
-  desenhar: (i: number) => Promise<void>;
+  desenhar: (i: number, fecharMeeple?: boolean) => Promise<void>;
   /** Carimba o X na parada i (tremida + poeira). */
   carimbar: (i: number) => Promise<void>;
   /** Câmera volta para o mapa inteiro. */
   recuar: (ms?: number) => Promise<void>;
-  /** Pinta o meeple inteiro (final). */
-  pintar: () => Promise<void>;
 };
 
 type Props = {
@@ -144,19 +142,27 @@ export default function Mapa({
       aplicarCam(geo.current.base);
     },
 
-    async desenhar(i) {
-      const medida = medidas.current[i];
-      const mascara = mascaras.current[i];
-      if (!medida || !mascara) return;
+    async desenhar(i, fecharMeeple = false) {
+      const indices = fecharMeeple ? [i, TRECHOS.length - 1] : [i];
+      const passos = indices.map((indice) => {
+        const medida = medidas.current[indice];
+        const mascara = mascaras.current[indice];
+        if (!medida || !mascara) return null;
+        return { medida, mascara, comprimento: medida.getTotalLength() };
+      });
+      if (passos.some((passo) => !passo)) return;
+
       setX(null);
-      const final = i === TRECHOS.length - 1;
-      const zoom = final ? 1.5 : 2.1;
+      const zoom = fecharMeeple || i === TRECHOS.length - 1 ? 1.5 : 2.1;
       await moverCam(foco(PONTOS[i], zoom), 800);
 
-      const L = medida.getTotalLength();
-      const ms = Math.max(1500, Math.min(3600, L * 10));
+      const segmentos = passos.filter((passo) => passo !== null);
+      const comprimentoTotal = segmentos.reduce((total, passo) => total + passo.comprimento, 0);
+      const ms = Math.max(1500, Math.min(3600, comprimentoTotal * 10));
       const g = viajante.current;
-      medida.style.opacity = "1";
+      segmentos.forEach(({ medida }) => {
+        medida.style.opacity = "1";
+      });
       g?.setAttribute("opacity", "1");
       let ultimo = performance.now();
 
@@ -165,10 +171,30 @@ export default function Mapa({
         const dt = Math.min(64, agora - ultimo);
         ultimo = agora;
         const e = suave(t);
-        mascara.style.strokeDashoffset = String(1 - e);
-        const p = medida.getPointAtLength(L * e);
+        const distancia = comprimentoTotal * e;
+        let distanciaRestante = distancia;
+        let pontoAtual: Pt | null = null;
+        let fasePercorrida = 0;
+        let localizouPonto = false;
+
+        for (const { medida, mascara, comprimento } of segmentos) {
+          const percorrido = Math.min(comprimento, Math.max(0, distanciaRestante));
+          const progresso = percorrido / comprimento;
+          mascara.style.strokeDashoffset = String(1 - progresso);
+          if (!localizouPonto && distanciaRestante <= comprimento) {
+            pontoAtual = medida.getPointAtLength(percorrido);
+            fasePercorrida += percorrido;
+            localizouPonto = true;
+          } else if (!localizouPonto) {
+            fasePercorrida += comprimento;
+          }
+          distanciaRestante = Math.max(0, distanciaRestante - comprimento);
+        }
+
+        const p = pontoAtual;
+        if (!p) return;
         // O meeplezinho anda "pulando", como uma peça movida no tabuleiro.
-        const fase = (e * L * Math.PI) / 26;
+        const fase = (fasePercorrida * Math.PI) / 26;
         const pulo = Math.abs(Math.sin(fase)) * 9;
         g?.setAttribute(
           "transform",
@@ -180,7 +206,9 @@ export default function Mapa({
       });
 
       g?.setAttribute("opacity", "0");
-      mascara.style.strokeDashoffset = "0";
+      segmentos.forEach(({ mascara }) => {
+        mascara.style.strokeDashoffset = "0";
+      });
     },
 
     async carimbar(i) {
@@ -200,16 +228,6 @@ export default function Mapa({
       await esperar(600);
     },
 
-    async pintar() {
-      contorno.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
-        duration: 700,
-        fill: "forwards",
-      });
-      await tween(2200, (t) => {
-        const e = 1 - Math.pow(1 - t, 3);
-        tinta.current?.setAttribute("r", String(e * 260));
-      });
-    },
   }));
 
   return (
@@ -260,14 +278,14 @@ export default function Mapa({
             cx={CENTRO_MEEPLE.x}
             cy={CENTRO_MEEPLE.y}
             r={concluido ? 260 : 0}
-            fill="#b8281c"
+            fill="#000"
           />
         </g>
         <path
           ref={contorno}
           d={MEEPLE}
           fill="none"
-          stroke="#3b0d08"
+          stroke="#000"
           strokeWidth={7}
           strokeLinejoin="round"
           opacity={concluido ? 1 : 0}
@@ -318,8 +336,8 @@ export default function Mapa({
           <g transform="translate(0 -11) scale(0.075) translate(-258 -190)">
             <path
               d={MEEPLE}
-              fill="#a3201a"
-              stroke="#3b0d08"
+              fill="#000"
+              stroke="#000"
               strokeWidth={24}
               strokeLinejoin="round"
             />
