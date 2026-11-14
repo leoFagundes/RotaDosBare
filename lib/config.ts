@@ -2,7 +2,7 @@
 
 export const TEXTOS = {
   chamada: "Despedida de solteiro",
-  titulo: "A Rota do Tesouro",
+  titulo: "A Rota da Bebida",
   promessa: "Nove bares. Nove enigmas. E muita bebida...",
   botaoIniciar: "Abrir o mapa",
 

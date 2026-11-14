@@ -16,8 +16,8 @@ const fell = IM_Fell_English({
 });
 
 export const metadata: Metadata = {
-  title: "A Rota do Tesouro",
-  description: "Nove bares, nove enigmas, um tesouro.",
+  title: "A Rota da Bebida",
+  description: "Nove bares, nove enigmas, e muita bebida.",
 };
 
 export const viewport: Viewport = {
@@ -30,7 +30,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${pirata.variable} ${fell.variable} h-full antialiased`}>
+    <html
+      lang="pt-BR"
+      className={`${pirata.variable} ${fell.variable} h-full antialiased`}
+    >
       <body className="h-full overflow-hidden">{children}</body>
     </html>
   );
