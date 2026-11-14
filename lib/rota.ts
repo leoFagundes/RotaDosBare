@@ -18,7 +18,7 @@ export const ROTA: ParadaSecreta[] = [
     endereco: "SCLRN 716",
     petisco: "Pastel",
     maps: maps("Bitaca da Norte SCLRN 716 Brasília"),
-    resposta: "123",
+    resposta: "Bitaca",
   },
   {
     nome: "Bar dos Cunhados",
@@ -26,7 +26,7 @@ export const ROTA: ParadaSecreta[] = [
     endereco: "CLN 115",
     petisco: "Torresmo",
     maps: maps("Bar dos Cunhados CLN 115 Brasília"),
-    resposta: "123",
+    resposta: "Cunhados",
   },
   {
     nome: "Ilgiorno Gelato",
@@ -34,7 +34,7 @@ export const ROTA: ParadaSecreta[] = [
     endereco: "CLN 113",
     petisco: "Gelato",
     maps: maps("Ilgiorno Gelato CLN 113 Brasília"),
-    resposta: "123",
+    resposta: "Ilgiorno",
   },
   {
     nome: "Arena 312 ou Chiquinhos Bar",
@@ -42,7 +42,7 @@ export const ROTA: ParadaSecreta[] = [
     endereco: "CLN 312",
     petisco: "Isca de frango ou batata com cheddar e bacon",
     maps: maps("Arena 312 CLN 312 Brasília"),
-    resposta: "123",
+    resposta: "Arena",
   },
   {
     nome: "Bar do Mendes",
@@ -50,7 +50,7 @@ export const ROTA: ParadaSecreta[] = [
     endereco: "CLN 410",
     petisco: "Pastel",
     maps: maps("Bar do Mendes CLN 410 Brasília"),
-    resposta: "123",
+    resposta: "Mendes",
   },
   {
     nome: "Vale da Lua",
@@ -58,7 +58,7 @@ export const ROTA: ParadaSecreta[] = [
     endereco: "CLN 408",
     petisco: "Carne de sol com mandioca",
     maps: maps("Vale da Lua CLN 408 Brasília"),
-    resposta: "123",
+    resposta: "Vale da Lua",
   },
   {
     nome: "Buteco do Encontro",
@@ -66,21 +66,21 @@ export const ROTA: ParadaSecreta[] = [
     endereco: "CLN 206",
     petisco: "Pastel",
     maps: maps("Buteco do Encontro CLN 206 Brasília"),
-    resposta: "123",
+    resposta: "butecodoEncontro",
   },
   {
     nome: "Origen",
     apelido: "Origen",
     endereco: "Asa Norte",
     maps: maps("Origen bar Asa Norte Brasília"),
-    resposta: "123",
+    resposta: "Origen",
   },
   {
     nome: "Deboche",
     apelido: "Deboche",
     endereco: "Asa Norte",
     maps: maps("Deboche bar Asa Norte Brasília"),
-    resposta: "123",
+    resposta: "Deboche",
   },
 ];
 
@@ -88,7 +88,7 @@ export const ROTA: ParadaSecreta[] = [
 export const DESTINO_FINAL: Parada = {
   nome: "Local da jogatina",
   apelido: "Jogatina",
-  endereco: "endereço a definir",
+  endereco: "Casa do Claudio ou do Diego",
   maps: maps("Brasília"),
 };
 
@@ -102,6 +102,5 @@ export function normalizar(s: string) {
     .normalize("NFD")
     .replace(/\p{M}/gu, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
+    .replace(/[^a-z0-9]+/g, "");
 }
